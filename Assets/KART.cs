@@ -20,10 +20,23 @@ public class KART : MonoBehaviour
         {
             //move forward
             rb.AddForce(transform.forward * 10);
+            
+            if (Input.GetKey(KeyCode.D))
+            {
+                //turn and forward
+                transform.Rotate(0,1,0);
+            } else if (Input.GetKey(KeyCode.A))
+            {
+                //turn and forward
+                transform.Rotate(0,-1,0);
+            }
+            
         } else if (Input.GetKey(KeyCode.S))
         {
             //move back
             rb.AddForce(transform.forward * -10);
         }
+        
+        
     }
 }
