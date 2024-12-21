@@ -24,11 +24,11 @@ public class KART : MonoBehaviour
             if (Input.GetKey(KeyCode.D))
             {
                 //turn and forward
-                transform.Rotate(0,1,0);
+                rb.AddTorque(0,5,0);
             } else if (Input.GetKey(KeyCode.A))
             {
                 //turn and forward
-                transform.Rotate(0,-1,0);
+                rb.AddTorque(0,-5,0);
             }
             
         } else if (Input.GetKey(KeyCode.S))
