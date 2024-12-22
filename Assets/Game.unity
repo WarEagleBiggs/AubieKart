@@ -711,7 +711,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.6
   m_SuspensionSpring:
-    spring: 90600
+    spring: 100000
     damper: 9500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -832,7 +832,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 40
+  field of view: 60
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -965,7 +965,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 171994937}
   m_Follow: {fileID: 171994937}
   m_Lens:
-    FieldOfView: 40
+    FieldOfView: 60
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -1430,7 +1430,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.6
   m_SuspensionSpring:
-    spring: 90600
+    spring: 100000
     damper: 9500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -1976,7 +1976,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.6
   m_SuspensionSpring:
-    spring: 90600
+    spring: 100000
     damper: 9500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -2631,8 +2631,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90a793c902e103143a7cb7a1299722ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motorForce: 5000
-  breakForce: 6000
+  motorForce: 30000
+  breakForce: 8000
   maxSteerAngle: 30
   frontLeftWheelCollider: {fileID: 267151385}
   frontRightWheelCollider: {fileID: 423416301}
@@ -2733,7 +2733,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.6
   m_SuspensionSpring:
-    spring: 90600
+    spring: 100000
     damper: 9500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3

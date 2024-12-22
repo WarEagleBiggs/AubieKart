@@ -805,6 +805,7 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     Standalone: POSEIDON;POSEIDON_URP;JUPITER;GRIFFIN;TEXTURE_GRAPH;GRIFFIN_2021;TG_SEARCHER
+    WebGL: GRIFFIN;TEXTURE_GRAPH;POSEIDON;POSEIDON_URP;JUPITER;GRIFFIN_2021;TG_SEARCHER
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
