@@ -1988,7 +1988,7 @@ GameObject:
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: bd5470e965fbd224daa85ccd38723150, type: 3}
+  m_Icon: {fileID: 2800000, guid: 188dfe7e559f13248ba2c41eb5a59328, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -3871,7 +3871,7 @@ Transform:
   m_GameObject: {fileID: 1968697378}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.7, z: 46.47}
+  m_LocalPosition: {x: 0, y: -1.98, z: 95.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
