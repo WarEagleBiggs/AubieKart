@@ -9,6 +9,13 @@ public class DebugGame : MonoBehaviour
 {
     public GameObject KART;
     public GameObject REF;
+
+    private void Update()
+    {
+        REF.transform.position = new Vector3(KART.transform.position.x, REF.transform.position.y,
+            KART.transform.position.z);
+    }
+
     public void ResetGame()
     {
         SceneManager.LoadScene("Game");
