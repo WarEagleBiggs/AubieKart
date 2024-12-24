@@ -8,6 +8,7 @@ public class KART : MonoBehaviour
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
+    
 
     // Settings
     [SerializeField] private float motorForce, breakForce, maxSteerAngle;
