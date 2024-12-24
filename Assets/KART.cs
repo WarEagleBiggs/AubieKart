@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class KART : MonoBehaviour
 {
+    public GameObject Ball;
+
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
@@ -21,6 +23,23 @@ public class KART : MonoBehaviour
     [SerializeField] private Transform frontLeftWheelTransform, frontRightWheelTransform;
     [SerializeField] private Transform rearLeftWheelTransform, rearRightWheelTransform;
 
+    private void Update()
+    {
+        //check for shoot
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            GameObject test = Instantiate(Ball, Ball.transform);
+            test.transform.parent = this.transform;
+            Rigidbody rb = test.GetComponent<Rigidbody>();
+           
+            test.SetActive(true);
+            rb.isKinematic = false;
+            
+            rb.AddForce(transform.forward * 1000, ForceMode.Impulse);
+            
+        }
+    }
+
     private void FixedUpdate() {
         GetInput();
         HandleMotor();
@@ -29,6 +48,8 @@ public class KART : MonoBehaviour
     }
 
     private void GetInput() {
+        
+        
         // Steering Input
         horizontalInput = Input.GetAxis("Horizontal");
 
