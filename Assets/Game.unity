@@ -2040,6 +2040,7 @@ GameObject:
   - component: {fileID: 380337527}
   - component: {fileID: 380337526}
   - component: {fileID: 380337529}
+  - component: {fileID: 380337530}
   m_Layer: 0
   m_Name: Balloon (2)
   m_TagString: Untagged
@@ -2163,6 +2164,24 @@ SpringJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &380337530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380337523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &388738407 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 943265238901660445, guid: afd0a61c8fd723e4d82aa2f2f5a9894f,
@@ -6154,7 +6173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMode: 0
+  outlineMode: 1
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
   outlineWidth: 2
   precomputeOutline: 0
@@ -10209,6 +10228,7 @@ GameObject:
   - component: {fileID: 1881081463}
   - component: {fileID: 1881081466}
   - component: {fileID: 1881081467}
+  - component: {fileID: 1881081468}
   m_Layer: 0
   m_Name: Balloon
   m_TagString: Untagged
@@ -10332,6 +10352,24 @@ SpringJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1881081468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881081461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &1882750875 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8759270293430313391, guid: afd0a61c8fd723e4d82aa2f2f5a9894f,
@@ -12518,6 +12556,7 @@ GameObject:
   - component: {fileID: 2109248569}
   - component: {fileID: 2109248568}
   - component: {fileID: 2109248571}
+  - component: {fileID: 2109248572}
   m_Layer: 0
   m_Name: Balloon (1)
   m_TagString: Untagged
@@ -12641,6 +12680,24 @@ SpringJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &2109248572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109248565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &2132913911 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4036735618014590438, guid: afd0a61c8fd723e4d82aa2f2f5a9894f,
