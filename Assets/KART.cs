@@ -28,6 +28,7 @@ public class KART : MonoBehaviour
         //check for shoot
         if (Input.GetKeyDown(KeyCode.E))
         {
+            //shoots ball
             GameObject test = Instantiate(Ball, Ball.transform);
             test.transform.parent = this.transform;
             Rigidbody rb = test.GetComponent<Rigidbody>();
