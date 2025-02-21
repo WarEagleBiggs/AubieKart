@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SceneFollow : MonoBehaviour
 {
 
+    /*
     private SceneView sceneCam;
     public bool follow;
     public Transform target;
@@ -22,5 +24,5 @@ public class SceneFollow : MonoBehaviour
         {
             sceneCam.LookAt(target.position);
         }
-    }
+    }*/
 }
