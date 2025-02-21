@@ -3892,7 +3892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 036af333f764f5344bb8b976a2bfa261, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  follow: 0
+  follow: 1
   target: {fileID: 999129741}
 --- !u!1 &653833029 stripped
 GameObject:
@@ -6950,6 +6950,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: GravesendSkatepark01
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0274ca6b5215ce94f9c54616adfa2756,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4999833659225524897, guid: 0274ca6b5215ce94f9c54616adfa2756,
         type: 3}
@@ -11153,7 +11158,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: afd0a61c8fd723e4d82aa2f2f5a9894f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
