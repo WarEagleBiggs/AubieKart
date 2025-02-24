@@ -15,7 +15,7 @@ public class DebugGame : MonoBehaviour
 
     private void Update()
     {
-        REF.transform.position = new Vector3(KART.transform.position.x, REF.transform.position.y,
+        REF.transform.position = new Vector3(KART.transform.position.x, KART.transform.position.y + 10,
             KART.transform.position.z);
     }
 
