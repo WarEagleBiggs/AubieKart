@@ -167,7 +167,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 662983787}
+  m_Mesh: {fileID: 1954438458}
 --- !u!33 &3633112
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -3389,7 +3389,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 1.89e-42, z: 2.105e-41, w: 2.0448e-41}
+  m_BoundingSphereOverride: {x: 0, y: 6e-44, z: 1.481e-42, w: 2.1227e-41}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -8287,7 +8287,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 0274ca6b5215ce94f9c54616adfa2756,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4999833659225524897, guid: 0274ca6b5215ce94f9c54616adfa2756,
         type: 3}
@@ -13717,7 +13717,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: afd0a61c8fd723e4d82aa2f2f5a9894f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -16422,6 +16422,10 @@ SceneRoots:
   - {fileID: 1926171233}
   - {fileID: 1067692050}
   - {fileID: 1973988887}
+  - {fileID: 304624781}
+  - {fileID: 1791734993}
+  - {fileID: 3633116}
+  - {fileID: 1892741934}
   - {fileID: 935237790}
   - {fileID: 880488054}
   - {fileID: 410087041}
@@ -16434,7 +16438,3 @@ SceneRoots:
   - {fileID: 634721737}
   - {fileID: 851783705}
   - {fileID: 1421461656}
-  - {fileID: 304624781}
-  - {fileID: 1791734993}
-  - {fileID: 3633116}
-  - {fileID: 1892741934}
