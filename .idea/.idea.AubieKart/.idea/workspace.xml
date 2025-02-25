@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="432ef073-6cc2-4c2f-a8f0-c427c2ee5cc4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/KART.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/KART.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/MiniCam.renderTexture" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/MiniCam.renderTexture" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Polaris - Low Poly Ecosystem/Polaris - Low Poly Terrain Engine/Editor/Packages/URP_Support.unitypackage.meta" beforeDir="false" />
-    </list>
+    <list default="true" id="432ef073-6cc2-4c2f-a8f0-c427c2ee5cc4" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,9 +17,9 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1468d7b66ba840a5b1cc628b013690163e00/4d/4c97ddd0/WheelCollider.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f7237cf7abef49bfbb552d7eb076e422174200/c0/da5484e2/Debug.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2tJoWLaYxX35wXObewmjAPFjsgJ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -32,6 +28,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -94,6 +91,7 @@
       <option name="presentableId" value="Default" />
       <updated>1740079569965</updated>
       <workItem from="1740079573893" duration="3799000" />
+      <workItem from="1740508577324" duration="970000" />
     </task>
     <servers />
   </component>
