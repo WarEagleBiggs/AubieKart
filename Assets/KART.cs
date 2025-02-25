@@ -10,6 +10,9 @@ public class KART : MonoBehaviour
     private float horizontalInput, verticalInput;
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
+
+    public float rearWheelDrive = 0.2f;
+    public float frontWheelDrive = 1.0f;
     
 
     // Settings
@@ -62,8 +65,12 @@ public class KART : MonoBehaviour
     }
 
     private void HandleMotor() {
-        frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
-        frontRightWheelCollider.motorTorque = verticalInput * motorForce;
+            rearLeftWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
+            rearRightWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
+
+            frontLeftWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
+            frontRightWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
+
         currentbreakForce = isBreaking ? breakForce : 0f;
         ApplyBreaking();
     }

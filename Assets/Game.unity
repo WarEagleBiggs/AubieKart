@@ -3306,7 +3306,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.8466646e+20, y: 1.4715043e+37, z: 1.3287e-41, w: 1e-45}
+  m_BoundingSphereOverride: {x: 7.38e-43, y: -5.4074836e-28, z: 7.38e-43, w: -7.229257e-27}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -5824,7 +5824,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 1.25
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -7624,9 +7624,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Ball: {fileID: 1719667884}
+  rearWheelDrive: 0.2
+  frontWheelDrive: 1
   motorForce: 1000
   breakForce: 30000
-  maxSteerAngle: 15
+  maxSteerAngle: 44
   frontLeftWheelCollider: {fileID: 267151385}
   frontRightWheelCollider: {fileID: 423416301}
   rearLeftWheelCollider: {fileID: 1045579515}
@@ -7999,7 +8001,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 1.25
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
