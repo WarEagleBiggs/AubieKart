@@ -5,6 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="432ef073-6cc2-4c2f-a8f0-c427c2ee5cc4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AubieKart/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AubieKart/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/KART.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/KART.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Polaris - Low Poly Ecosystem/Polaris - Low Poly Terrain Engine/Editor/Packages/URP_Support.unitypackage.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,6 +97,7 @@
       <updated>1740079569965</updated>
       <workItem from="1740079573893" duration="3799000" />
       <workItem from="1740508577324" duration="970000" />
+      <workItem from="1741044712597" duration="12860000" />
     </task>
     <servers />
   </component>
