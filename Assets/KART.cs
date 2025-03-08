@@ -8,9 +8,9 @@ public class KART : MonoBehaviour
 {
     public GameObject Ball;
 
-    private float horizontalInput, verticalInput;
-    private float currentSteerAngle, currentbreakForce;
-    private bool isBreaking;
+    public float horizontalInput, verticalInput;
+    public float currentSteerAngle, currentbreakForce;
+    public bool isBreaking;
 
     public float rearWheelDrive = 0.25f;
     public float frontWheelDrive = 0.75f;
