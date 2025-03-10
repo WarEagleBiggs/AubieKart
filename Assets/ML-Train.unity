@@ -11561,6 +11561,7 @@ GameObject:
   - component: {fileID: 999129750}
   - component: {fileID: 999129749}
   - component: {fileID: 999129751}
+  - component: {fileID: 999129752}
   m_Layer: 3
   m_Name: KART - AI
   m_TagString: Untagged
@@ -11901,6 +11902,20 @@ MonoBehaviour:
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
   m_StartVerticalOffset: 0
   m_EndVerticalOffset: 0
+--- !u!114 &999129752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 999129737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 5
+  TakeActionsBetweenDecisions: 1
 --- !u!1001 &1002339277
 PrefabInstance:
   m_ObjectHideFlags: 0

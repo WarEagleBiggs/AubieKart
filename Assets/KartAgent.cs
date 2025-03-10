@@ -25,7 +25,7 @@ public class KartAgent : Agent
 
     void FixedUpdate()
     {
-        Time.timeScale = 1.0f;  // Prevent ML-Agents from changing simulation speed
+        //Time.timeScale = 1.0f;  // Prevent ML-Agents from changing simulation speed
     }
 
     public override void OnEpisodeBegin()
