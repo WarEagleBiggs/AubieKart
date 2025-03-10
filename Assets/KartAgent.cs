@@ -10,7 +10,6 @@ public class KartAgent : Agent
     [SerializeField] private Transform target;
     [SerializeField] private Transform spawnPoint;
     private KART kartController;
-    private Rigidbody rb;
     private Vector3 startPosition;
     private Quaternion startRotation;
     private float previousDistanceToTarget;
@@ -18,12 +17,8 @@ public class KartAgent : Agent
     public override void Initialize()
     {
         kartController = GetComponent<KART>();
-        rb = GetComponent<Rigidbody>();
-
         startPosition = spawnPoint != null ? spawnPoint.position : transform.position;
         startRotation = spawnPoint != null ? spawnPoint.rotation : transform.rotation;
-
-        Debug.Log("🚀 KartAgent Initialized");
     }
 
     private void Start()
@@ -33,79 +28,46 @@ public class KartAgent : Agent
 
     void FixedUpdate()
     {
-        if (StepCount % 5 == 0)
-        {
-            RequestDecision();
-            Debug.Log("🔥 AI requested new decision");
-        }
-
-        Debug.Log($"🚗 Applied Movement - Steering: {kartController.horizontalInput}, Acceleration: {kartController.verticalInput}");
+        RequestDecision();
     }
 
     public override void OnEpisodeBegin()
     {
         transform.position = spawnPoint != null ? spawnPoint.position : new Vector3(Random.Range(-10f, 10f), 1f, Random.Range(-10f, 10f));
         transform.rotation = spawnPoint != null ? spawnPoint.rotation : startRotation;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        transform.position += new Vector3(0, 0.5f, 0);
-
-        kartController.verticalInput = 1f;
+        kartController.verticalInput = 0.5f;
         kartController.horizontalInput = 0f;
-        kartController.isBreaking = false;
 
         float randomX = Random.Range(-15f, 15f);
         float randomZ = Random.Range(-15f, 15f);
         target.position = new Vector3(randomX, target.position.y, randomZ);
 
         previousDistanceToTarget = Vector3.Distance(transform.position, target.position);
-
-        Debug.Log($"🎯 New Target Position: {target.position}");
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.position);
         sensor.AddObservation(target.position);
-        sensor.AddObservation(rb.velocity);
-        sensor.AddObservation(rb.angularVelocity);
         sensor.AddObservation(Vector3.Distance(transform.position, target.position));
-
-        Debug.Log($"📡 Observations - Position: {transform.position}, Target: {target.position}, Velocity: {rb.velocity}");
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
         float steering = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
-        float acceleration = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
-        bool isBreaking = actions.ContinuousActions[2] > 0.5f;
+        float acceleration = Mathf.Clamp(actions.ContinuousActions[1], 0.3f, 1f); 
 
-        if (Mathf.Abs(acceleration) < 0.5f)
-        {
-            acceleration = acceleration >= 0 ? 1f : -1f;
-        }
+        kartController.horizontalInput = steering;
+        kartController.verticalInput = acceleration;
 
-        if (Mathf.Abs(steering) < 0.3f)
-        {
-            steering = steering >= 0 ? 0.7f : -0.7f;
-        }
-
-        kartController.horizontalInput = steering * 200f;
-        kartController.verticalInput = acceleration * 200f;
-        kartController.isBreaking = isBreaking;
-
-        Debug.Log($"🎮 AI Inputs - Steering: {steering}, Acceleration: {acceleration}, Braking: {isBreaking}");
-
-        if (Mathf.Abs(acceleration) > 0.1f)
-        {
-            AddReward(1f);
-        }
+        Debug.Log($"🎮 AI Inputs - Steering: {kartController.horizontalInput}, Acceleration: {kartController.verticalInput}");
 
         float currentDistance = Vector3.Distance(transform.position, target.position);
-        float progressReward = (previousDistanceToTarget - currentDistance) * 1f;
-        AddReward(Mathf.Clamp(progressReward, -2f, 2f));
+        float progressReward = (previousDistanceToTarget - currentDistance) * 0.01f;
+        AddReward(Mathf.Clamp(progressReward, -0.05f, 0.05f));
 
-        AddReward(-0.01f);
+        // Small penalty per step to prevent idling
+        AddReward(-0.05f);
 
         previousDistanceToTarget = currentDistance;
     }
@@ -113,9 +75,8 @@ public class KartAgent : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActions = actionsOut.ContinuousActions;
-        continuousActions[0] = Input.GetAxis("Horizontal") * 200f;
-        continuousActions[1] = Input.GetAxis("Vertical") * 200f;
-        continuousActions[2] = Input.GetKey(KeyCode.Space) ? 1f : 0f;
+        continuousActions[0] = Input.GetAxis("Horizontal");
+        continuousActions[1] = Mathf.Clamp(Input.GetAxis("Vertical"), 0.3f, 1f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -123,20 +84,7 @@ public class KartAgent : Agent
         if (other.gameObject.CompareTag("Target"))
         {
             AddReward(50f);
-            Debug.Log("🏆 AI reached the target!");
             EndEpisode();
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            AddReward(-10f);
-            Debug.Log("🚧 AI hit a wall - Reversing");
-            kartController.verticalInput = -1f;
-            kartController.horizontalInput = Random.Range(-1f, 1f) * 200f;
-            RequestDecision();
         }
     }
 }
