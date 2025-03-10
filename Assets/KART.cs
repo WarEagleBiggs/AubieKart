@@ -24,6 +24,8 @@ public class KART : MonoBehaviour
     private RectTransform breakShape;
     private Vector2 referenceScreenSize = new Vector2(800, 600);
     private Vector2 pixelMultiple;
+
+    public bool isPlayer;
     
     // Settings
     [SerializeField] private float motorForce, breakForce, maxSteerAngle;
@@ -38,9 +40,13 @@ public class KART : MonoBehaviour
 
     private void Start()
     {
-        gasShape = gasButton.GetComponent<RectTransform>();
-        breakShape = breakButton.GetComponent<RectTransform>();
-        pixelMultiple = new Vector2(Screen.width / referenceScreenSize.x, Screen.height / referenceScreenSize.y);
+        if (isPlayer)
+        {
+            gasShape = gasButton.GetComponent<RectTransform>();
+            breakShape = breakButton.GetComponent<RectTransform>();
+            pixelMultiple = new Vector2(Screen.width / referenceScreenSize.x, Screen.height / referenceScreenSize.y);
+        }
+        
     }
     
     private void Update()
