@@ -191,16 +191,35 @@ public class KART : MonoBehaviour
         
     }
 
-    private void HandleMotor() {
+    private void HandleMotor() 
+    {
+        // If accelerating, apply motor force
+        if (verticalInput > 0) 
+        {
             rearLeftWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
             rearRightWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
-
             frontLeftWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
             frontRightWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
 
-        currentbreakForce = isBreaking ? breakForce : 0f;
+            // Disable braking when accelerating
+            currentbreakForce = 0f;
+        } 
+        else if (verticalInput == 0) 
+        {
+            // If no input, slightly reduce speed (but don’t fully stop immediately)
+            rearLeftWheelCollider.motorTorque = 0;
+            rearRightWheelCollider.motorTorque = 0;
+            frontLeftWheelCollider.motorTorque = 0;
+            frontRightWheelCollider.motorTorque = 0;
+
+            // Reduce speed naturally (like coasting) instead of forcing a full stop
+            currentbreakForce = breakForce * 0.2f; 
+        }
+
         ApplyBreaking();
     }
+
+
 
     private void ApplyBreaking() {
         frontRightWheelCollider.brakeTorque = currentbreakForce;
