@@ -10,11 +10,25 @@ public class KartAgent : Agent
 {
     [SerializeField] private GameObject targetPrefab;
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] private List<Transform> targetPositions;
+
     private GameObject targetInstance;
     private KART kartController;
     private Vector3 startPosition;
     private Quaternion startRotation;
     private float previousDistanceToTarget;
+
+    private float upsideDownTimer = 0f;
+    private float sidewaysTimer = 0f;
+    private float stuckTimer = 0f;
+    private float reverseTimer = 0f;
+
+    private float upsideDownThreshold = 3f;
+    private float sidewaysThreshold = 3f;
+    private float stuckThreshold = 3f; 
+    private float reverseThreshold = 2f; 
+
+    private Vector3 previousPosition; 
 
     public override void Initialize()
     {
@@ -34,6 +48,8 @@ public class KartAgent : Agent
     void FixedUpdate()
     {
         RequestDecision();
+        CheckIfFlipped();
+        CheckIfStuck();
     }
 
     public override void OnEpisodeBegin()
@@ -41,13 +57,25 @@ public class KartAgent : Agent
         transform.position = spawnPoint != null ? spawnPoint.position : new Vector3(Random.Range(-10f, 10f), 1f, Random.Range(-10f, 10f));
         transform.rotation = spawnPoint != null ? spawnPoint.rotation : startRotation;
 
-        kartController.agentAccelInput = 0.5f;
+        kartController.agentAccelInput = 0.3f;
         kartController.agentSteerInput = 0f;
         kartController.agentBrakeInput = 0f;
+        upsideDownTimer = 0f;
+        sidewaysTimer = 0f;
+        stuckTimer = 0f;
+        reverseTimer = 0f;
 
-        float randomX = Random.Range(-30f, 30f);
-        float randomZ = Random.Range(-30f, 30f);
-        targetInstance.transform.position = new Vector3(randomX, targetInstance.transform.position.y, randomZ);
+        previousPosition = transform.position; 
+
+        if (targetPositions.Count > 0)
+        {
+            Transform selectedTarget = targetPositions[Random.Range(0, targetPositions.Count)];
+            targetInstance.transform.position = selectedTarget.position;
+        }
+        else
+        {
+            Debug.LogError("Target positions list is empty! Please add target positions.");
+        }
 
         previousDistanceToTarget = Vector3.Distance(transform.position, targetInstance.transform.position);
     }
@@ -61,31 +89,6 @@ public class KartAgent : Agent
         Vector3 directionToTarget = (targetInstance.transform.position - transform.position).normalized;
         float angleToTarget = Vector3.Dot(transform.forward, directionToTarget);
         sensor.AddObservation(angleToTarget);
-
-        // ✅ Detect walls using ray perception
-        float[] rayAngles = { -60f, -30f, -15f, 0f, 15f, 30f, 60f };
-        foreach (float angle in rayAngles)
-        {
-            Vector3 direction = Quaternion.Euler(0, angle, 0) * transform.forward;
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 10f))
-            {
-                if (hit.collider.CompareTag("Wall"))
-                {
-                    sensor.AddObservation(1f); // Wall detected
-                    sensor.AddObservation(hit.distance / 10f); // Normalize distance
-                }
-                else
-                {
-                    sensor.AddObservation(0f); // No wall detected
-                    sensor.AddObservation(1f); // Max distance
-                }
-            }
-            else
-            {
-                sensor.AddObservation(0f); // No wall detected
-                sensor.AddObservation(1f); // Max distance
-            }
-        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -109,33 +112,93 @@ public class KartAgent : Agent
         float angleToTarget = Vector3.Dot(transform.forward, directionToTarget);
 
         float distanceChange = previousDistanceToTarget - currentDistanceToTarget;
-        AddReward(distanceChange * 2.0f);
 
-        if (braking > 0.5f) AddReward(-0.2f);
+        AddReward(distanceChange * 3.0f);
+        AddReward(angleToTarget * 0.5f);
 
-        // ✅ Penalize AI for getting too close to walls
-        float[] rayAngles = { -60f, -30f, -15f, 0f, 15f, 30f, 60f };
-        foreach (float angle in rayAngles)
+        if (acceleration > 0.7f && angleToTarget < 0.3f)
         {
-            Vector3 direction = Quaternion.Euler(0, angle, 0) * transform.forward;
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 2.5f)) // Detect walls within 2.5m
-            {
-                if (hit.collider.CompareTag("Wall"))
-                {
-                    AddReward(-0.5f); // ✅ Penalize for being too close to walls
-                    Debug.Log("AI Too Close to Wall! Penalty Applied.");
-                }
-            }
+            AddReward(-0.3f);
+        }
+
+        if (braking > 0.5f)
+        {
+            AddReward(0.2f);
         }
 
         previousDistanceToTarget = currentDistanceToTarget;
+    }
+
+    private void CheckIfFlipped()
+    {
+        float upDot = Vector3.Dot(transform.up, Vector3.down);
+        float sideDot = Mathf.Abs(Vector3.Dot(transform.right, Vector3.up));
+
+        if (upDot > 0.7f) 
+        {
+            upsideDownTimer += Time.deltaTime;
+            if (upsideDownTimer > upsideDownThreshold)
+            {
+                Debug.Log("AI Stuck Upside Down! Resetting...");
+                AddReward(-3f);
+                EndEpisode();
+            }
+        }
+        else
+        {
+            upsideDownTimer = 0f;
+        }
+
+        if (sideDot > 0.8f) 
+        {
+            sidewaysTimer += Time.deltaTime;
+            if (sidewaysTimer > sidewaysThreshold)
+            {
+                Debug.Log("AI Stuck On Side! Resetting...");
+                AddReward(-3f);
+                EndEpisode();
+            }
+        }
+        else
+        {
+            sidewaysTimer = 0f;
+        }
+    }
+
+    private void CheckIfStuck()
+    {
+        if (Vector3.Distance(transform.position, previousPosition) < 0.3f) 
+        {
+            stuckTimer += Time.deltaTime;
+        }
+        else
+        {
+            stuckTimer = 0f;
+            reverseTimer = 0f; 
+            previousPosition = transform.position; 
+        }
+
+        if (stuckTimer > stuckThreshold)
+        {
+            Debug.Log("AI Stuck! Attempting Reverse...");
+            kartController.agentAccelInput = -0.5f; 
+            kartController.agentBrakeInput = 0f; 
+            reverseTimer += Time.deltaTime;
+
+            if (reverseTimer > reverseThreshold) 
+            {
+                Debug.Log("AI Still Stuck! Resetting...");
+                AddReward(-3f);
+                EndEpisode();
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Wall"))
         {
-            AddReward(-2f); // ✅ Strong penalty for hitting walls
+            AddReward(-3f);
             Debug.Log("AI Crashed into Wall! Major Penalty.");
             EndEpisode();
         }
@@ -146,14 +209,14 @@ public class KartAgent : Agent
         var continuousActions = actionsOut.ContinuousActions;
         continuousActions[0] = Input.GetAxis("Horizontal");
         continuousActions[1] = Mathf.Clamp(Input.GetAxis("Vertical"), 0f, 1f);
-        continuousActions[2] = Input.GetKey(KeyCode.Space) ? 1f : 0f; // ✅ Player can brake too
+        continuousActions[2] = Input.GetKey(KeyCode.Space) ? 1f : 0f;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject == targetInstance)
         {
-            AddReward(10f); // ✅ Big reward for reaching the target
+            AddReward(10f);
             EndEpisode();
         }
     }
