@@ -3511,7 +3511,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: NaN, y: -5.940404e-11, z: 4.5905e-41, w: -6.617985e+31}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 7e-45, z: 2.0343e-41, w: -1.6690898e+32}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -8363,11 +8363,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Ball: {fileID: 1719667884}
+  horizontalInput: 0
+  verticalInput: 0
+  currentSteerAngle: 0
+  currentbreakForce: 0
+  isBreaking: 0
   rearWheelDrive: 0.25
   frontWheelDrive: 0.75
   gasButton: {fileID: 326605353}
   breakButton: {fileID: 1163953311}
   touchSensitivity: 0.004
+  isPlayer: 0
   motorForce: 10000
   breakForce: 30000
   maxSteerAngle: 25

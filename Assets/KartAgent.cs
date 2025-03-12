@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using Random = UnityEngine.Random;
 
 public class KartAgent : Agent
 {
@@ -17,14 +18,20 @@ public class KartAgent : Agent
     public override void Initialize()
     {
         kartController = GetComponent<KART>();
+        kartController.useAgentControls = true; // Enable AI control
         startPosition = spawnPoint != null ? spawnPoint.position : transform.position;
         startRotation = spawnPoint != null ? spawnPoint.rotation : transform.rotation;
     }
 
     private void Start()
     {
-        Time.timeScale = 1f;
+        // Get layer ID of "Agent"
+        int agentLayer = LayerMask.NameToLayer("KART");
+
+        // Ignore collisions between all objects in the "Agent" layer
+        Physics.IgnoreLayerCollision(agentLayer, agentLayer);
     }
+
 
     void FixedUpdate()
     {
@@ -35,13 +42,17 @@ public class KartAgent : Agent
     {
         transform.position = spawnPoint != null ? spawnPoint.position : new Vector3(Random.Range(-10f, 10f), 1f, Random.Range(-10f, 10f));
         transform.rotation = spawnPoint != null ? spawnPoint.rotation : startRotation;
-        kartController.verticalInput = 0.5f;
-        kartController.horizontalInput = 0f;
 
-        float randomX = Random.Range(-15f, 15f);
-        float randomZ = Random.Range(-15f, 15f);
+        // ✅ Reset AI inputs
+        kartController.agentAccelInput = 0.5f;
+        kartController.agentSteerInput = 0f;
+
+        // ✅ Place the target randomly within a range
+        float randomX = Random.Range(-30f, 30f);
+        float randomZ = Random.Range(-30f, 30f);
         target.position = new Vector3(randomX, target.position.y, randomZ);
 
+        // ✅ Store the initial distance to the target
         previousDistanceToTarget = Vector3.Distance(transform.position, target.position);
     }
 
@@ -55,21 +66,31 @@ public class KartAgent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         float steering = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
-        float acceleration = Mathf.Clamp(actions.ContinuousActions[1], 0.3f, 1f); 
+        float acceleration = Mathf.Clamp(actions.ContinuousActions[1], 0f, 1f); 
 
-        kartController.horizontalInput = steering;
-        kartController.verticalInput = acceleration;
+        // ✅ Assign AI inputs
+        kartController.agentSteerInput = steering;
+        kartController.agentAccelInput = acceleration;
 
-        Debug.Log($"🎮 AI Inputs - Steering: {kartController.horizontalInput}, Acceleration: {kartController.verticalInput}");
+        // ✅ Calculate distance to the target
+        float currentDistanceToTarget = Vector3.Distance(transform.position, target.position);
 
-        float currentDistance = Vector3.Distance(transform.position, target.position);
-        float progressReward = (previousDistanceToTarget - currentDistance) * 0.01f;
-        AddReward(Mathf.Clamp(progressReward, -0.05f, 0.05f));
+        // ✅ Reward for getting closer to the target
+        float distanceChange = previousDistanceToTarget - currentDistanceToTarget;
+        if (distanceChange > 0)
+        {
+            AddReward(distanceChange * 0.1f); // Reward proportional to distance improvement
+        }
+        else
+        {
+            AddReward(-0.05f); // Small penalty for moving away
+        }
 
-        // Small penalty per step to prevent idling
-        AddReward(-0.05f);
+        // ✅ Update previous distance
+        previousDistanceToTarget = currentDistanceToTarget;
 
-        previousDistanceToTarget = currentDistance;
+        // ✅ Debugging log
+        Debug.Log($"Distance to Target: {currentDistanceToTarget}, Reward: {distanceChange * 0.1f}");
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -83,7 +104,16 @@ public class KartAgent : Agent
     {
         if (other.gameObject.CompareTag("Target"))
         {
-            AddReward(50f);
+            AddReward(5f); // Big reward for reaching the target
+            EndEpisode();
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Wall")) 
+        {
+            AddReward(-1); // Penalty for crashing
             EndEpisode();
         }
     }

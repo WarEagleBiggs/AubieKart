@@ -27,6 +27,11 @@ public class KART : MonoBehaviour
 
     public bool isPlayer;
     
+    //ai test
+    public bool useAgentControls = false; // Flag to determine if AI is controlling the kart
+    public float agentSteerInput = 0f; // AI Steering input
+    public float agentAccelInput = 0f; // AI Acceleration input
+    
     // Settings
     [SerializeField] private float motorForce, breakForce, maxSteerAngle;
 
@@ -87,23 +92,23 @@ public class KART : MonoBehaviour
     }
 
     private void GetInput() {
-        // Bypass keyboard input if touchscreen in use
-        if (Input.touchCount > 0)
+        if (useAgentControls) 
         {
+            // Use AI inputs instead of player inputs
+            horizontalInput = agentSteerInput;
+            verticalInput = agentAccelInput;
+            isBreaking = false; // You can modify this if braking is necessary
+            return;
+        }
+
+        // Normal player inputs
+        if (Input.touchCount > 0) {
             GetTouchInput();
             return;
         }
-        steerTouchIndex = null;
-        gasTouchIndex = null;
-        breakTouchIndex = null;
-        
-        // Steering Input
+    
         horizontalInput = Input.GetAxis("Horizontal");
-
-        // Acceleration Input
         verticalInput = Input.GetAxis("Vertical");
-
-        // Breaking Input
         isBreaking = Input.GetKey(KeyCode.Space);
     }
 
