@@ -28,7 +28,7 @@ public class KartAgent : Agent
     private float stuckThreshold = 3f; 
     private float reverseThreshold = 2f; 
 
-    private Vector3 previousPosition; 
+    private Vector3 previousPosition;
 
     public override void Initialize()
     {
@@ -65,7 +65,7 @@ public class KartAgent : Agent
         stuckTimer = 0f;
         reverseTimer = 0f;
 
-        previousPosition = transform.position; 
+        previousPosition = transform.position;
 
         if (targetPositions.Count > 0)
         {
@@ -89,6 +89,15 @@ public class KartAgent : Agent
         Vector3 directionToTarget = (targetInstance.transform.position - transform.position).normalized;
         float angleToTarget = Vector3.Dot(transform.forward, directionToTarget);
         sensor.AddObservation(angleToTarget);
+
+        // ✅ Raycasts for obstacle detection
+        float frontWall = CheckWall(Vector3.forward);
+        float leftWall = CheckWall(Quaternion.Euler(0, -45, 0) * Vector3.forward);
+        float rightWall = CheckWall(Quaternion.Euler(0, 45, 0) * Vector3.forward);
+
+        sensor.AddObservation(frontWall);
+        sensor.AddObservation(leftWall);
+        sensor.AddObservation(rightWall);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -103,30 +112,55 @@ public class KartAgent : Agent
         float acceleration = Mathf.Clamp(actions.ContinuousActions[1], 0f, 1f);
         float braking = Mathf.Clamp(actions.ContinuousActions[2], 0f, 1f);
 
+        // ✅ Adjust steering based on obstacles
+        float frontWall = CheckWall(Vector3.forward);
+        float leftWall = CheckWall(Quaternion.Euler(0, -45, 0) * Vector3.forward);
+        float rightWall = CheckWall(Quaternion.Euler(0, 45, 0) * Vector3.forward);
+
+        if (frontWall < 0.6f)  // Wall detected in front
+        {
+            if (leftWall > rightWall)  
+            {
+                steering = -1f;  // Steer left to avoid obstacle
+            }
+            else
+            {
+                steering = 1f;  // Steer right to avoid obstacle
+            }
+            AddReward(-0.2f);  // Small penalty for facing a wall
+        }
+
+        if (leftWall < 0.5f)  
+        {
+            steering = 0.5f;  // Steer slightly right to avoid left obstacle
+        }
+        else if (rightWall < 0.5f)
+        {
+            steering = -0.5f;  // Steer slightly left to avoid right obstacle
+        }
+
         kartController.agentSteerInput = steering;
         kartController.agentAccelInput = acceleration;
         kartController.agentBrakeInput = braking;
 
         float currentDistanceToTarget = Vector3.Distance(transform.position, targetInstance.transform.position);
-        Vector3 directionToTarget = (targetInstance.transform.position - transform.position).normalized;
-        float angleToTarget = Vector3.Dot(transform.forward, directionToTarget);
-
         float distanceChange = previousDistanceToTarget - currentDistanceToTarget;
 
         AddReward(distanceChange * 3.0f);
-        AddReward(angleToTarget * 0.5f);
-
-        if (acceleration > 0.7f && angleToTarget < 0.3f)
-        {
-            AddReward(-0.3f);
-        }
-
-        if (braking > 0.5f)
-        {
-            AddReward(0.2f);
-        }
 
         previousDistanceToTarget = currentDistanceToTarget;
+    }
+
+    private float CheckWall(Vector3 direction)
+    {
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, 5f))
+        {
+            if (hit.collider.CompareTag("Wall"))
+            {
+                return hit.distance / 5f;  // Normalize distance (closer to 1 means farther from wall)
+            }
+        }
+        return 1f;  // No wall detected
     }
 
     private void CheckIfFlipped()
@@ -139,7 +173,6 @@ public class KartAgent : Agent
             upsideDownTimer += Time.deltaTime;
             if (upsideDownTimer > upsideDownThreshold)
             {
-                Debug.Log("AI Stuck Upside Down! Resetting...");
                 AddReward(-3f);
                 EndEpisode();
             }
@@ -154,7 +187,6 @@ public class KartAgent : Agent
             sidewaysTimer += Time.deltaTime;
             if (sidewaysTimer > sidewaysThreshold)
             {
-                Debug.Log("AI Stuck On Side! Resetting...");
                 AddReward(-3f);
                 EndEpisode();
             }
@@ -167,49 +199,29 @@ public class KartAgent : Agent
 
     private void CheckIfStuck()
     {
-        if (Vector3.Distance(transform.position, previousPosition) < 0.3f) 
+        if (Vector3.Distance(transform.position, previousPosition) < 0.3f)
         {
             stuckTimer += Time.deltaTime;
         }
         else
         {
             stuckTimer = 0f;
-            reverseTimer = 0f; 
-            previousPosition = transform.position; 
+            reverseTimer = 0f;
+            previousPosition = transform.position;
         }
 
         if (stuckTimer > stuckThreshold)
         {
-            Debug.Log("AI Stuck! Attempting Reverse...");
-            kartController.agentAccelInput = -0.5f; 
-            kartController.agentBrakeInput = 0f; 
+            kartController.agentAccelInput = -0.5f;
+            kartController.agentBrakeInput = 0f;
             reverseTimer += Time.deltaTime;
 
-            if (reverseTimer > reverseThreshold) 
+            if (reverseTimer > reverseThreshold)
             {
-                Debug.Log("AI Still Stuck! Resetting...");
                 AddReward(-3f);
                 EndEpisode();
             }
         }
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Wall"))
-        {
-            AddReward(-3f);
-            Debug.Log("AI Crashed into Wall! Major Penalty.");
-            EndEpisode();
-        }
-    }
-
-    public override void Heuristic(in ActionBuffers actionsOut)
-    {
-        var continuousActions = actionsOut.ContinuousActions;
-        continuousActions[0] = Input.GetAxis("Horizontal");
-        continuousActions[1] = Mathf.Clamp(Input.GetAxis("Vertical"), 0f, 1f);
-        continuousActions[2] = Input.GetKey(KeyCode.Space) ? 1f : 0f;
     }
 
     private void OnTriggerEnter(Collider other)
