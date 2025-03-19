@@ -93,23 +93,33 @@ public class KART : MonoBehaviour
         verticalInput = Input.GetAxis("Vertical");
         isBraking = Input.GetKey(KeyCode.Space);
     }
+    
 
     private void HandleMotor()
     {
         if (verticalInput > 0) 
         {
-            // Apply motor force
+            // Apply forward motor force
             rearLeftWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
             rearRightWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
             frontLeftWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
             frontRightWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
 
-            // Disable braking when accelerating
             currentBrakeForce = 0f;
         } 
+        else if (verticalInput < 0) 
+        {
+            // Apply reverse force equally
+            rearLeftWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
+            rearRightWheelCollider.motorTorque = verticalInput * motorForce * rearWheelDrive;
+            frontLeftWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
+            frontRightWheelCollider.motorTorque = verticalInput * motorForce * frontWheelDrive;
+
+            currentBrakeForce = 0f; // Disable braking when reversing
+        }
         else if (isBraking) 
         {
-            // Apply braking smoothly
+            // Apply full braking
             currentBrakeForce = brakeForce;
         } 
         else 
@@ -120,6 +130,7 @@ public class KART : MonoBehaviour
 
         ApplyBraking();
     }
+
 
     private void ApplyBraking()
     {
