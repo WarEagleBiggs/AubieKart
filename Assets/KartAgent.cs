@@ -21,11 +21,13 @@ public class KartAgent : Agent
 
     private float upsideDownTimer = 0f;
     private float stuckTimer = 0f;
-    private float reverseTimer = 0f;
+    private float lockTimer = 0f;
     
     private float upsideDownThreshold = 3f;
     private float stuckThreshold = 3f; 
-    private float reverseThreshold = 2f; 
+    private float lockThreshold = 5.0f; // Time to remain locked
+    private bool isLocked = false;
+    private bool wasStuck = false;
     
     public override void Initialize()
     {
@@ -56,13 +58,17 @@ public class KartAgent : Agent
         transform.position = spawnPoint != null ? spawnPoint.position : new Vector3(Random.Range(-10f, 10f), 1f, Random.Range(-10f, 10f));
         transform.rotation = spawnPoint != null ? spawnPoint.rotation : startRotation;
 
-        kartController.agentAccelInput = 0.3f;
+        kartController.agentAccelInput = 0f;
         kartController.agentSteerInput = 0f;
-        kartController.agentBrakeInput = 0f;
+        kartController.agentBrakeInput = 1.0f; // Ensure full stop initially
+        kartController.ForceStopWheels(); // Hard stop all motion
+
         upsideDownTimer = 0f;
         stuckTimer = 0f;
-        reverseTimer = 0f;
+        lockTimer = 0f;
         previousPosition = transform.position;
+        isLocked = false;
+        wasStuck = false;
 
         do
         {
@@ -96,31 +102,57 @@ public class KartAgent : Agent
         float acceleration = Mathf.Clamp(actions.ContinuousActions[1], 0f, 1f);
         float braking = Mathf.Clamp(actions.ContinuousActions[2], 0f, 1f);
 
-        if (stuckTimer > stuckThreshold)
+        if (stuckTimer > stuckThreshold || IsAgainstWall())
         {
-            // Reverse and steer away
-            kartController.agentAccelInput = -0.6f;
-            kartController.agentBrakeInput = 0f;
-            kartController.agentSteerInput = Mathf.Sin(Time.time * 2f) * 0.8f;
-            reverseTimer += Time.deltaTime;
-            
-            if (reverseTimer > reverseThreshold)
+            Debug.Log("Agent is stuck or against a wall. FULLY LOCKING WHEELS...");
+            kartController.agentBrakeInput = 1.0f;
+            kartController.agentAccelInput = 0f;
+            kartController.agentSteerInput = 0f;
+            kartController.ForceStopWheels(); // Ensure complete stop
+            isLocked = true;
+            lockTimer = 0f;
+            wasStuck = true;
+        }
+        
+        if (isLocked)
+        {
+            lockTimer += Time.deltaTime;
+            kartController.agentAccelInput = 0f;
+            kartController.agentBrakeInput = 1.0f;
+            kartController.agentSteerInput = 0f;
+            if (lockTimer > lockThreshold)
             {
+                Debug.Log("Unlocking wheels...");
+                isLocked = false;
                 stuckTimer = 0f;
-                reverseTimer = 0f;
+                lockTimer = 0f;
             }
+            return;
         }
-        else
+        
+        if (wasStuck && Vector3.Distance(transform.position, previousPosition) > 0.5f)
         {
-            kartController.agentSteerInput = Mathf.Lerp(kartController.agentSteerInput, steering, Time.deltaTime * 5f);
-            kartController.agentAccelInput = acceleration;
-            kartController.agentBrakeInput = braking;
+            AddReward(5f); // Reward for successfully getting unstuck
+            wasStuck = false;
         }
+        
+        kartController.agentSteerInput = Mathf.Lerp(kartController.agentSteerInput, steering, Time.deltaTime * 5f);
+        kartController.agentAccelInput = acceleration;
+        kartController.agentBrakeInput = braking;
+        lockTimer = 0f; // Reset lock timer if moving normally
 
         float currentDistanceToTarget = Vector3.Distance(transform.position, targetInstance.transform.position);
         float distanceChange = previousDistanceToTarget - currentDistanceToTarget;
         AddReward(distanceChange * 3.0f);
         previousDistanceToTarget = currentDistanceToTarget;
+    }
+
+    private bool IsAgainstWall()
+    {
+        RaycastHit hit;
+        bool isWall = Physics.Raycast(transform.position, transform.forward, out hit, 1.5f) && hit.collider.CompareTag("Wall");
+        if (isWall) Debug.Log("Agent detected wall in front");
+        return isWall;
     }
 
     private void CheckIfFlipped()
@@ -151,7 +183,7 @@ public class KartAgent : Agent
         else
         {
             stuckTimer = 0f;
-            reverseTimer = 0f;
+            lockTimer = 0f;
             previousPosition = transform.position;
         }
     }

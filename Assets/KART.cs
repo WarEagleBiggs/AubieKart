@@ -128,6 +128,24 @@ public class KART : MonoBehaviour
         rearLeftWheelCollider.brakeTorque = currentBrakeForce;
         rearRightWheelCollider.brakeTorque = currentBrakeForce;
     }
+    
+    public void ForceStopWheels()
+    {
+        // Completely stop any forward/reverse movement
+        frontLeftWheelCollider.motorTorque = 0f;
+        frontRightWheelCollider.motorTorque = 0f;
+        rearLeftWheelCollider.motorTorque = 0f;
+        rearRightWheelCollider.motorTorque = 0f;
+
+        // Apply maximum brake force
+        frontLeftWheelCollider.brakeTorque = brakeForce * 10f;
+        frontRightWheelCollider.brakeTorque = brakeForce * 10f;
+        rearLeftWheelCollider.brakeTorque = brakeForce * 10f;
+        rearRightWheelCollider.brakeTorque = brakeForce * 10f;
+    
+        Debug.Log("ForceStopWheels: Wheels are fully locked.");
+    }
+
 
     private void HandleSteering()
     {
