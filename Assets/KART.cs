@@ -154,7 +154,7 @@ public class KART : MonoBehaviour
         rearLeftWheelCollider.brakeTorque = brakeForce * 10f;
         rearRightWheelCollider.brakeTorque = brakeForce * 10f;
     
-        Debug.Log("ForceStopWheels: Wheels are fully locked.");
+        //Debug.Log("ForceStopWheels: Wheels are fully locked.");
     }
 
 

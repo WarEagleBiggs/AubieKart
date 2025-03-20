@@ -9,43 +9,41 @@ using Random = UnityEngine.Random;
 public class KartAgent : Agent
 {
     [SerializeField] private GameObject targetPrefab;
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private List<Transform> targetPositions;
-    
-    private GameObject targetInstance;
-    private KART kartController;
-    private Vector3 startPosition;
-    private Quaternion startRotation;
-    private float previousDistanceToTarget;
-    private Vector3 previousPosition;
+    [SerializeField] private List<Transform> targetPositions; // Assign in Unity Inspector
 
-    private float upsideDownTimer = 0f;
+    private GameObject targetInstance;
+    private Transform assignedTarget;
+    private KART kartController;
+    private Vector3 previousPosition;
+    
+    private Rigidbody rb;
+    
     private float stuckTimer = 0f;
-    private float lockTimer = 0f;
-    
-    private float upsideDownThreshold = 3f;
-    private float stuckThreshold = 3f; 
-    private float lockThreshold = 5.0f;
-    private float reverseTime = 5.0f;
-    private bool isLocked = false;
-    private bool wasStuck = false;
+    private float stuckThreshold = 3f; // Time before considering stuck
     private bool isReversing = false;
-    
+
+    private float idleTimer = 0f;
+    private float idleThreshold = 2f; // Time before punishment for staying still
+
+    private float reverseTime = 0.5f; // Time to reverse before turning
+    private float reverseStartTime = 0f;
+
+    private float backwardTimer = 0f; // Tracks how long the agent drives backward
+    private float backwardPenaltyThreshold = 2.0f; // Time before punishing for reversing too long
+
     public override void Initialize()
     {
         kartController = GetComponent<KART>();
         kartController.useAgentControls = true;
-        startPosition = spawnPoint != null ? spawnPoint.position : transform.position;
-        startRotation = spawnPoint != null ? spawnPoint.rotation : transform.rotation;
         targetInstance = Instantiate(targetPrefab);
-    }
+        rb = GetComponent<Rigidbody>();
 
-    private void Start()
-    {
-        int agentLayer = LayerMask.NameToLayer("KART");
-        Physics.IgnoreLayerCollision(agentLayer, agentLayer);
-        
-        Time.timeScale = 1;
+        rb.isKinematic = false;
+        rb.useGravity = true;
+
+        // Ignore collisions between Karts
+        int kartLayer = LayerMask.NameToLayer("KART");
+        Physics.IgnoreLayerCollision(kartLayer, kartLayer, true);
     }
 
     void FixedUpdate()
@@ -53,33 +51,42 @@ public class KartAgent : Agent
         RequestDecision();
         CheckIfFlipped();
         CheckIfStuck();
+        CheckIfIdle();
+        CheckIfDrivingBackwards();
+        DrawRayToTarget(); // Call the new function to visualize the ray
     }
+
 
     public override void OnEpisodeBegin()
     {
-        transform.position = spawnPoint != null ? spawnPoint.position : new Vector3(Random.Range(-10f, 10f), 1f, Random.Range(-10f, 10f));
-        transform.rotation = spawnPoint != null ? spawnPoint.rotation : startRotation;
+        if (targetPositions == null || targetPositions.Count == 0)
+        {
+            Debug.LogError("No target positions assigned! Please add them in the Inspector.");
+            return;
+        }
 
-        kartController.agentAccelInput = 0f;
-        kartController.agentSteerInput = 0f;
-        kartController.agentBrakeInput = 1.0f;
+        // Pick a random spawn position for the agent
+        Transform spawnLocation = targetPositions[Random.Range(0, targetPositions.Count)];
+        transform.position = spawnLocation.position;
+        transform.rotation = spawnLocation.rotation;
+
+        // Reset physics to avoid falling
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
         kartController.ForceStopWheels();
 
-        upsideDownTimer = 0f;
         stuckTimer = 0f;
-        lockTimer = 0f;
-        previousPosition = transform.position;
-        isLocked = false;
-        wasStuck = false;
+        idleTimer = 0f;
+        backwardTimer = 0f;
         isReversing = false;
 
+        // Assign a unique target for this agent
         do
         {
-            Transform selectedTarget = targetPositions[Random.Range(0, targetPositions.Count)];
-            targetInstance.transform.position = selectedTarget.position;
-        } while (Vector3.Distance(transform.position, targetInstance.transform.position) < 5f);
+            assignedTarget = targetPositions[Random.Range(0, targetPositions.Count)];
+        } while (Vector3.Distance(transform.position, assignedTarget.position) < 5f);
 
-        previousDistanceToTarget = Vector3.Distance(transform.position, targetInstance.transform.position);
+        targetInstance.transform.position = assignedTarget.position;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -97,93 +104,69 @@ public class KartAgent : Agent
     {
         if (actions.ContinuousActions.Length < 3)
         {
-            Debug.LogError($"Not enough actions received! Expected 3, got {actions.ContinuousActions.Length}");
             return;
         }
 
         float steering = Mathf.Clamp(actions.ContinuousActions[0], -1f, 1f);
-        float acceleration = Mathf.Clamp(actions.ContinuousActions[1], -4f, 1f);
+        float acceleration = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
         float braking = Mathf.Clamp(actions.ContinuousActions[2], 0f, 1f);
 
-        if (stuckTimer > stuckThreshold || IsAgainstWall())
+        // Track if the agent is moving backward for too long
+        if (acceleration < 0)
         {
-            Debug.Log("Agent is stuck. APPLYING BRAKES...");
-            kartController.agentBrakeInput = 1.0f; // Use player braking logic
-            kartController.agentAccelInput = 0f;
-            isLocked = true;
-            lockTimer = 0f;
-            return;
+            backwardTimer += Time.deltaTime;
         }
-
-        if (isLocked)
+        else
         {
-            lockTimer += Time.deltaTime;
-            if (lockTimer > 1.5f) // Pause before reversing
-            {
-                Debug.Log("Brakes applied. Switching to REVERSE...");
-                isLocked = false;
-                isReversing = true;
-                kartController.agentBrakeInput = 0f; // Release brakes
-                kartController.agentAccelInput = -4.0f; // Strong reverse force
-                kartController.agentSteerInput = Mathf.Sign(Random.Range(-1f, 1f)) * 1.2f;
-                lockTimer = 0f;
-            }
-            return;
+            backwardTimer = 0f; // Reset when moving forward
         }
 
         if (isReversing)
         {
-            lockTimer += Time.deltaTime;
-            if (lockTimer > reverseTime)
+            if (Time.time - reverseStartTime > reverseTime)
             {
-                Debug.Log("Reversing complete. Switching to FORWARD drive...");
+                // Stop reversing and turn
                 isReversing = false;
                 kartController.agentAccelInput = 1.0f;
                 kartController.agentBrakeInput = 0f;
-                kartController.agentSteerInput = Mathf.Sign(Random.Range(-1f, 1f)) * 0.8f;
+                kartController.agentSteerInput = Random.Range(-1f, 1f);
             }
             return;
         }
 
-        kartController.agentSteerInput = Mathf.Lerp(kartController.agentSteerInput, steering, Time.deltaTime * 5f);
+        kartController.agentSteerInput = Mathf.Lerp(kartController.agentSteerInput, steering, Time.deltaTime * 3f);
         kartController.agentAccelInput = acceleration;
         kartController.agentBrakeInput = braking;
-
-        float currentDistanceToTarget = Vector3.Distance(transform.position, targetInstance.transform.position);
-        float distanceChange = previousDistanceToTarget - currentDistanceToTarget;
-        AddReward(distanceChange * 3.0f);
-        previousDistanceToTarget = currentDistanceToTarget;
-    }
-
-    private bool IsAgainstWall()
-    {
-        RaycastHit hit;
-        bool isWall = Physics.Raycast(transform.position, transform.forward, out hit, 1.5f) && hit.collider.CompareTag("Wall");
-        return isWall;
     }
 
     private void CheckIfFlipped()
     {
         float upDot = Vector3.Dot(transform.up, Vector3.down);
+        float sideDot = Mathf.Abs(Vector3.Dot(transform.right, Vector3.up));
 
-        if (upDot > 0.7f) 
+        if (upDot > 0.7f || sideDot > 0.8f) 
         {
-            upsideDownTimer += Time.deltaTime;
-            if (upsideDownTimer > upsideDownThreshold)
-            {
-                AddReward(-3f);
-                EndEpisode();
-            }
-        }
-        else
-        {
-            upsideDownTimer = 0f;
+            AddReward(-1.0f); // Penalize flipping
+            EndEpisode();
         }
     }
+    
+    private void DrawRayToTarget()
+    {
+        if (assignedTarget == null) return;
+
+        Vector3 direction = (assignedTarget.position - transform.position).normalized;
+        float distance = Vector3.Distance(transform.position, assignedTarget.position);
+
+        // Draw a visible debug ray
+        Debug.DrawLine(transform.position, assignedTarget.position, Color.green);
+
+    }
+
 
     private void CheckIfStuck()
     {
-        if (Vector3.Distance(transform.position, previousPosition) < 0.3f) 
+        if (Vector3.Distance(transform.position, previousPosition) < 0.3f)
         {
             stuckTimer += Time.deltaTime;
         }
@@ -192,14 +175,58 @@ public class KartAgent : Agent
             stuckTimer = 0f;
             previousPosition = transform.position;
         }
+
+        if (stuckTimer > stuckThreshold && !isReversing) 
+        {
+            // Reverse just enough to turn
+            isReversing = true;
+            reverseStartTime = Time.time;
+            kartController.agentAccelInput = -1.0f; 
+            kartController.agentSteerInput = Random.Range(-1f, 1f); 
+        }
+    }
+
+    private void CheckIfIdle()
+    {
+        if (Vector3.Distance(transform.position, previousPosition) < 0.1f)
+        {
+            idleTimer += Time.deltaTime;
+        }
+        else
+        {
+            idleTimer = 0f;
+        }
+
+        if (idleTimer > idleThreshold)
+        {
+            AddReward(-1f); // Punish staying still
+        }
+    }
+
+    private void CheckIfDrivingBackwards()
+    {
+        if (backwardTimer > backwardPenaltyThreshold)
+        {
+            AddReward(-1f); // Punish driving backwards too long
+            backwardTimer = 0f; // Reset timer to prevent continuous penalties
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == targetInstance)
+        // Ensure the agent only wins if it reaches its OWN target
+        if (other.CompareTag("Target") && other.transform.position == assignedTarget.position)
         {
-            AddReward(10f);
+            AddReward(5.0f); // Reward for reaching the assigned target
             EndEpisode();
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            AddReward(-2.0f); // Penalize hitting walls
         }
     }
 }
