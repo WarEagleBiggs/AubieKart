@@ -3511,7 +3511,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 7e-45, z: 2.0343e-41, w: -1.6690898e+32}
+  m_BoundingSphereOverride: {x: 3.126353e-39, y: 2.2e-44, z: -3.857091e-39, w: 1.83716e-40}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -8372,10 +8372,13 @@ MonoBehaviour:
   frontWheelDrive: 0.75
   gasButton: {fileID: 326605353}
   breakButton: {fileID: 1163953311}
-  touchSensitivity: 0.004
-  isPlayer: 0
+  touchSensitivity: 0.2
+  isPlayer: 1
+  useAgentControls: 0
+  agentSteerInput: 0
+  agentAccelInput: 0
   motorForce: 10000
-  breakForce: 30000
+  breakForce: 0
   maxSteerAngle: 25
   frontLeftWheelCollider: {fileID: 267151385}
   frontRightWheelCollider: {fileID: 423416301}
