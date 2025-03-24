@@ -1460,7 +1460,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: NaN, z: -0, w: 2.7447558e+29}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 6e-44, z: 1.7e-44, w: 9.822e-42}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -3678,7 +3678,7 @@ MonoBehaviour:
   m_RaysPerDirection: 10
   m_MaxRayDegrees: 180
   m_SphereCastRadius: 0.5
-  m_RayLength: 25
+  m_RayLength: 100
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967283

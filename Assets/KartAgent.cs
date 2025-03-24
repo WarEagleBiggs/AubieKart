@@ -88,18 +88,20 @@ public class KartAgent : Agent
         //reward for getting closesr
         float currentDistance = Vector3.Distance(transform.position, targetInstance.transform.position);
         float previousDistance = Vector3.Distance(previousPosition, targetInstance.transform.position);
-        AddReward(previousDistance - currentDistance);
+        AddReward((previousDistance - currentDistance) * 1000);
+        //Debug.Log((previousDistance - currentDistance) * 100);
 
         //small reward/punishment for forwards/backwards
         if (kartController.agentAccelInput > 0) 
         {
-            AddReward(0.01f);
+            AddReward(0.001f);
         }
         else if (kartController.agentAccelInput < 0) 
         {
-            AddReward(-0.02f); 
+            AddReward(-0.001f); 
         }
 
+        
         
     }
 
@@ -135,7 +137,7 @@ public class KartAgent : Agent
     {
         if (other.CompareTag("Target") && other.transform.position == assignedTarget.position)
         {
-            AddReward(5.0f);
+            AddReward(150.0f);
             EndEpisode();
         }
     }
@@ -144,7 +146,7 @@ public class KartAgent : Agent
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            AddReward(-1.0f);
+            AddReward(-100.0f);
         }
     }
     
