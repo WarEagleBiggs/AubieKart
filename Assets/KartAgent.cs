@@ -71,6 +71,9 @@ public class KartAgent : Agent
         sensor.AddObservation(targetInstance.transform.position);
         sensor.AddObservation(Vector3.Distance(transform.position, targetInstance.transform.position));
         sensor.AddObservation(Vector3.Dot(transform.forward, (targetInstance.transform.position - transform.position).normalized));
+        sensor.AddObservation(rb.velocity);
+        sensor.AddObservation(transform.forward);
+
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -81,7 +84,6 @@ public class KartAgent : Agent
 
         kartController.agentSteerInput = steering;
         kartController.agentAccelInput = acceleration;
-        //kartController.agentBrakeInput = braking;
         
         //reward for getting closesr
         float currentDistance = Vector3.Distance(transform.position, targetInstance.transform.position);
