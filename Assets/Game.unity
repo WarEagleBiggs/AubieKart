@@ -2942,11 +2942,11 @@ Transform:
   m_GameObject: {fileID: 380337523}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.097, y: 3.955, z: -1.968}
+  m_LocalPosition: {x: 1.097, y: 1.5, z: -1.968}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 999129741}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &380337526
 Rigidbody:
@@ -3511,7 +3511,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 3.126353e-39, y: 2.2e-44, z: -3.857091e-39, w: 1.83716e-40}
+  m_BoundingSphereOverride: {x: 7.47e-43, y: 6e-44, z: 4e-45, w: 1.5617e-41}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -8348,6 +8348,9 @@ Transform:
   - {fileID: 314066320}
   - {fileID: 1306975781}
   - {fileID: 1614457086}
+  - {fileID: 1881081465}
+  - {fileID: 2109248566}
+  - {fileID: 380337524}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &999129743
@@ -13918,11 +13921,11 @@ Transform:
   m_GameObject: {fileID: 1881081461}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.955, z: -1.968}
+  m_LocalPosition: {x: 0, y: 1.5, z: -1.968}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 999129741}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1881081466
 Rigidbody:
@@ -17635,11 +17638,11 @@ Transform:
   m_GameObject: {fileID: 2109248565}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.097, y: 3.955, z: -1.968}
+  m_LocalPosition: {x: -1.097, y: 1.5, z: -1.968}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 999129741}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2109248568
 Rigidbody:
@@ -17850,9 +17853,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 940665681}
   - {fileID: 999129741}
-  - {fileID: 1881081465}
-  - {fileID: 2109248566}
-  - {fileID: 380337524}
   - {fileID: 330585546}
   - {fileID: 268432104}
   - {fileID: 1968697379}

@@ -31,16 +31,14 @@ public class KartAgent : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var continuousActions = actionsOut.ContinuousActions;
-        continuousActions[0] = Input.GetAxis("Horizontal"); // Steering
-        continuousActions[1] = Input.GetAxis("Vertical");   // Acceleration
-        continuousActions[2] = Input.GetKey(KeyCode.Space) ? 1f : 0f; // Optional: braking
+        continuousActions[0] = Input.GetAxis("Horizontal");
+        continuousActions[1] = Input.GetAxis("Vertical"); 
     }
 
 
     void FixedUpdate()
     {
         RequestDecision();
-        CheckIfStuck();
         CheckIfFlipped();
         DrawRayToTarget();
     }
@@ -53,7 +51,6 @@ public class KartAgent : Agent
 
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        //kartController.ForceStopWheels();
 
         stuckTimer = 0f;
 
@@ -68,6 +65,7 @@ public class KartAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.position);
+        sensor.AddObservation(transform.rotation);
         sensor.AddObservation(targetInstance.transform.position);
         sensor.AddObservation(Vector3.Distance(transform.position, targetInstance.transform.position));
         sensor.AddObservation(Vector3.Dot(transform.forward, (targetInstance.transform.position - transform.position).normalized));
@@ -85,44 +83,14 @@ public class KartAgent : Agent
         kartController.agentSteerInput = steering;
         kartController.agentAccelInput = acceleration;
         
-        //reward for getting closesr
         float currentDistance = Vector3.Distance(transform.position, targetInstance.transform.position);
         float previousDistance = Vector3.Distance(previousPosition, targetInstance.transform.position);
-        AddReward((previousDistance - currentDistance) * 1000);
-        //Debug.Log((previousDistance - currentDistance) * 100);
-
-        //small reward/punishment for forwards/backwards
-        if (kartController.agentAccelInput > 0) 
-        {
-            AddReward(0.001f);
-        }
-        else if (kartController.agentAccelInput < 0) 
-        {
-            AddReward(-0.001f); 
-        }
-
+        float score = (previousDistance - currentDistance) * 10;
+        AddReward(score);
+        Debug.Log(score);
         
-        
-    }
+        previousPosition = transform.position;
 
-    private void CheckIfStuck()
-    {
-        float moveDistance = Vector3.Distance(transform.position, previousPosition);
-        if (moveDistance < 0.1f)
-        {
-            stuckTimer += Time.deltaTime;
-        }
-        else
-        {
-            stuckTimer = 0f;
-            previousPosition = transform.position;
-        }
-
-        if (stuckTimer > stuckThreshold)
-        {
-            AddReward(-1.0f);
-            stuckTimer = 0f;
-        }
     }
 
     private void CheckIfFlipped()
@@ -146,7 +114,7 @@ public class KartAgent : Agent
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            AddReward(-100.0f);
+            AddReward(-1f);
         }
     }
     
