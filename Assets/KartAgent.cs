@@ -9,17 +9,17 @@ public class KartAgent : Agent
 {
     // ---------- References ----------
     [Header("Map / Spawning")]
-    [SerializeField] private Transform mapCenter;      // drag your center-of-map object here
+    [SerializeField] private Transform mapCenter;      
     [SerializeField] private float minSpawnRadius = 5f;
     [SerializeField] private float maxSpawnRadius = 45f;
-    [SerializeField] private LayerMask groundMask;     // floor/track layers
-    [SerializeField] private LayerMask wallMask;       // walls/obstacles layers
+    [SerializeField] private LayerMask groundMask;     
+    [SerializeField] private LayerMask wallMask;       
     [SerializeField] private float groundCheckHeight = 60f;
     [SerializeField] private float spawnYOffset = 0.25f;
     [SerializeField] private float clearanceCheckRadius = 0.6f;
 
     [Header("Exploration Grid (episode-local)")]
-    [SerializeField] private Vector2 gridOrigin = Vector2.zero; // lower-left world (x,z)
+    [SerializeField] private Vector2 gridOrigin = Vector2.zero; 
     [SerializeField] private float cellSize = 5f;
     [SerializeField] private int gridWidth = 80;
     [SerializeField] private int gridHeight = 80;
@@ -49,7 +49,7 @@ public class KartAgent : Agent
     public override void Initialize()
     {
         kart = GetComponent<KART>();
-        kart.useAgentControls = true; // we drive it; player script stays untouched
+        kart.useAgentControls = true; 
         rb = GetComponent<Rigidbody>();
         visited = new HashSet<int>();
     }
@@ -60,7 +60,7 @@ public class KartAgent : Agent
         rb.angularVelocity = Vector3.zero;
         stuckTimer = 0f;
 
-        // ---------- Robust spawn around mapCenter ----------
+        // ----------  spawn around mapCenter ----------
         const int maxTries = 20;
         bool spawned = false;
         for (int i = 0; i < maxTries && !spawned; i++)
@@ -102,7 +102,7 @@ public class KartAgent : Agent
 
         // reset exploration memory
         visited.Clear();
-        MarkVisitedCell(); // mark current cell (no reward yet)
+        MarkVisitedCell(); 
     }
 
     public override void CollectObservations(VectorSensor sensor)
