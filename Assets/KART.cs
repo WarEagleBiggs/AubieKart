@@ -229,4 +229,13 @@ public class KART : MonoBehaviour
         wheelTransform.rotation = rot;
         wheelTransform.position = pos;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "BOX")
+        {
+            MysteryBox Mys = other.GetComponent<MysteryBox>();
+            Mys.StartCoroutine(Mys.ShrinkAndRespawn());
+        }
+    }
 }
