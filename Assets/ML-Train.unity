@@ -3556,7 +3556,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 9.6, z: 12.000001, w: -10.400001}
+  m_BoundingSphereOverride: {x: 1.8466646e+20, y: 6e-44, z: 4.2e-44, w: 1.0122e-41}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
