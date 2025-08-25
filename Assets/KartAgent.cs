@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
 public class KartAgent : Agent
@@ -172,6 +174,8 @@ public class KartAgent : Agent
             AddReward(-0.2f);
             EndEpisode();
         }
+        
+        
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -221,5 +225,17 @@ public class KartAgent : Agent
         // visualize spawn clearance
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, clearanceCheckRadius);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //reward for reaching target
+        if (other.tag == "BOX")
+        {
+            AddReward(0.1f);
+        } else if (other.tag == "Center")
+        {
+            AddReward(0.1f);
+        }
     }
 }
