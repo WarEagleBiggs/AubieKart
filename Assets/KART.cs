@@ -42,6 +42,24 @@ public class KART : MonoBehaviour
     // Wheels
     [SerializeField] private Transform frontLeftWheelTransform, frontRightWheelTransform;
     [SerializeField] private Transform rearLeftWheelTransform, rearRightWheelTransform;
+    
+    
+    // --- Auto Unflip / Stuck Recovery ---
+    [Header("Auto Recovery")]
+    [SerializeField] private bool autoUnflip = true;
+    [SerializeField] private float unflipDelay = 1.0f;        // seconds tipped before recovering
+    [SerializeField] private float flipDotThreshold = 0.35f;   // <= this means "tipped" (dot(up,WorldUp))
+    [SerializeField] private float minSpeedForRecovery = 0.8f; // only recover if mostly stopped
+    [SerializeField] private float groundRayHeight = 5f;       // raycast height above kart for fallback
+    [SerializeField] private float groundRayDistance = 20f;    // how far to look for the floor
+    [SerializeField] private float uprightOffsetY = 0.25f;     // small lift off the ground
+
+    [SerializeField] private DebugGame debugGame;
+
+    private float tippedTimer = 0f;
+    private Rigidbody rb;
+
+    
 
     private void Start()
     {
@@ -51,7 +69,7 @@ public class KART : MonoBehaviour
             breakShape = breakButton.GetComponent<RectTransform>();
             pixelMultiple = new Vector2(Screen.width / referenceScreenSize.x, Screen.height / referenceScreenSize.y);
         }
-        
+        rb = GetComponent<Rigidbody>();
     }
     
     private void Update()
@@ -77,7 +95,66 @@ public class KART : MonoBehaviour
         HandleMotor();
         HandleSteering();
         UpdateWheels();
+        
+        CheckFlipAndRecover();
     }
+    
+    private void CheckFlipAndRecover()
+    {
+        if (!autoUnflip || rb == null) return;
+
+        // Dot of our up vs world up: 1 = upright, 0 = sideways, -1 = fully upside-down
+        float upDot = Vector3.Dot(transform.up, Vector3.up);
+        bool tipped = upDot <= flipDotThreshold; // sideways or worse
+        bool slow = rb.velocity.magnitude <= minSpeedForRecovery;
+
+        if (tipped && slow)
+        {
+            tippedTimer += Time.fixedDeltaTime;
+            if (tippedTimer >= unflipDelay)
+            {
+                DoAutoRecover();
+                tippedTimer = 0f;
+            }
+        }
+        else
+        {
+            tippedTimer = 0f;
+        }
+    }
+
+    private void DoAutoRecover()
+    {
+        // 1) If you’ve linked DebugGame, use its exact Stuck() behavior (teleport to REF)
+        if (debugGame != null)
+        {
+            debugGame.Stuck();
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            return;
+        }
+
+        // 2) Otherwise, self-recover: find ground under/nearby, upright the kart, zero velocity
+        Vector3 start = transform.position + Vector3.up * groundRayHeight;
+        Vector3 targetPos = transform.position + Vector3.up * 1.0f; // fallback position
+
+        if (Physics.Raycast(start, Vector3.down, out var hit, groundRayDistance, ~0, QueryTriggerInteraction.Ignore))
+        {
+            targetPos = hit.point + Vector3.up * uprightOffsetY;
+        }
+
+        // Keep current yaw (heading) but align to world up
+        Vector3 fwdFlat = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+        if (fwdFlat.sqrMagnitude < 1e-4f) fwdFlat = transform.right; // fallback if degenerate
+
+        Quaternion uprightRot = Quaternion.LookRotation(fwdFlat, Vector3.up);
+
+        // Apply transform & clear motion
+        transform.SetPositionAndRotation(targetPos, uprightRot);
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+    }
+
 
     private void TouchDebug()
     {

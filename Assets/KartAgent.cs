@@ -230,12 +230,12 @@ public class KartAgent : Agent
     private void OnTriggerEnter(Collider other)
     {
         //reward for reaching target
-        if (other.tag == "BOX")
+        if (other.tag == "Box")
         {
             AddReward(0.1f);
         } else if (other.tag == "Center")
         {
-            AddReward(0.1f);
+            AddReward(0.15f);
         }
     }
 }
