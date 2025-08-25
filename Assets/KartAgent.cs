@@ -33,7 +33,10 @@ public class KartAgent : Agent
     [Header("Rewards")]
     [SerializeField] private float coverageReward = 0.5f;        // new cell bonus
     [SerializeField] private float revisitReward = 0.01f;        // tiny for revisits
-    [SerializeField] private float flowScale = 0.02f;            // speed * forwardness * clearance
+
+    // ↑ Made this stronger by default (you can tune in Inspector).
+    [SerializeField] private float flowScale = 0.10f;            // speed * forwardness * clearance
+
     [SerializeField] private float proximityPenaltyScale = 0.01f;// penalize hugging walls
     [SerializeField] private float spinPenaltyScale = 0.0015f;   // penalize yaw spin
     [SerializeField] private float timePenalty = -0.0005f;       // tiny step cost
@@ -41,7 +44,7 @@ public class KartAgent : Agent
 
     [Header("Episode Enders")]
     [SerializeField] private float stuckSpeed = 0.6f;            // m/s considered "stuck"
-    [SerializeField] private float stuckTime = 3f;               // seconds below stuckSpeed → end
+    [SerializeField] private float stuckTime = 2.0f;             // a bit shorter so creep isn't rewarded
 
     private KART kart;
     private Rigidbody rb;
@@ -139,18 +142,44 @@ public class KartAgent : Agent
         kart.agentSteerInput = steer;
         kart.agentAccelInput = drive;
 
+        float dt = Time.fixedDeltaTime;
+
         // ---------- Rewards ----------
         // (1) Coverage / exploration
         bool isNewCell = MarkVisitedCell();
         AddReward(isNewCell ? coverageReward : revisitReward);
 
-        // (2) Flow through open space: speed * forwardness * front clearance
+        // Compute dynamics once
         float speed = rb.velocity.magnitude;
         float forwardness = rb.velocity.sqrMagnitude > 1e-6f
             ? Mathf.Max(0f, Vector3.Dot(transform.forward, rb.velocity.normalized))
             : 0f;
         float frontClear = FrontClearance();
-        AddReward(speed * forwardness * frontClear * flowScale);
+
+        // (2) Flow through open space: speed * forwardness * front clearance
+        AddReward(speed * forwardness * frontClear * flowScale * dt);
+
+        // ---- SPEED-INCENTIVE SHAPING (added) ----
+
+        // (2b) Speed floor / cruising bonus
+        const float vMin = 4.0f;      // tune to your track
+        const float cruiseK = 0.02f;  // scale for cruising reward
+        if (speed > vMin)
+            AddReward((speed - vMin) * cruiseK * dt);
+
+        // (2c) Idle tax: discourage sitting still with no throttle
+        if (Mathf.Abs(drive) < 0.2f && speed < 1.0f)
+            AddReward(-0.01f * dt);
+
+        // (2d) Reward throttle when aligned & clear ahead
+        float throttleHelpful = Mathf.Clamp01(forwardness) * frontClear; // 0..1
+        AddReward(drive * throttleHelpful * 0.01f * dt);
+
+        // (2e) Discourage braking while already cruising reasonably straight/fast
+        if (drive < -0.2f && speed > 3f && forwardness > 0.2f)
+            AddReward(-0.02f * dt);
+
+        // -----------------------------------------
 
         // (3) Proximity penalty (don’t skim walls)
         float closeness = 1f - frontClear; // 0 clear … 1 touching
@@ -174,8 +203,6 @@ public class KartAgent : Agent
             AddReward(-0.2f);
             EndEpisode();
         }
-        
-        
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -233,7 +260,8 @@ public class KartAgent : Agent
         if (other.tag == "Box")
         {
             AddReward(0.1f);
-        } else if (other.tag == "Center")
+        }
+        else if (other.tag == "Center")
         {
             AddReward(0.15f);
         }
