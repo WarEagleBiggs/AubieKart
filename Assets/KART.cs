@@ -313,6 +313,10 @@ public class KART : MonoBehaviour
         {
             MysteryBox Mys = other.GetComponent<MysteryBox>();
             Mys.StartCoroutine(Mys.ShrinkAndRespawn());
+        } else if (other.CompareTag("Banana"))
+        {
+            
+            rb.AddTorque(Vector3.up * 300, ForceMode.Impulse);
         }
     }
 }

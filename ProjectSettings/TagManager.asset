@@ -9,6 +9,7 @@ TagManager:
   - Floor
   - KART
   - BOX
+  - Banana
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Ground
   - Box
   - Center
-  - 
+  - Banana
   - 
   - 
   - 
