@@ -58,8 +58,17 @@ public class KART : MonoBehaviour
 
     private float tippedTimer = 0f;
     private Rigidbody rb;
-
     
+    
+    //item manager
+    public bool hasItem;
+    public List<GameObject> ItemList;
+
+    public GameObject itemImage_Box;
+    public GameObject itemImage_Banana;
+    
+
+
 
     private void Start()
     {
@@ -313,10 +322,26 @@ public class KART : MonoBehaviour
         {
             MysteryBox Mys = other.GetComponent<MysteryBox>();
             Mys.StartCoroutine(Mys.ShrinkAndRespawn());
+            ItemPickup();
         } else if (other.CompareTag("Banana"))
         {
             
             rb.AddTorque(Vector3.up * 300, ForceMode.Impulse);
         }
+    }
+
+    public void ItemPickup()
+    {
+        hasItem = true;
+        StartCoroutine(ItemCycleAnimation());
+
+    }
+
+    public IEnumerator ItemCycleAnimation()
+    {
+        itemImage_Box.SetActive(true);
+        yield return new WaitForSeconds(2);
+        itemImage_Box.SetActive(false);
+        itemImage_Banana.SetActive(true);
     }
 }
