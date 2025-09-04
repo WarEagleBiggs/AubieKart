@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class KART : MonoBehaviour
 {
-    public GameObject Ball;
 
     public float horizontalInput, verticalInput;
     public float currentSteerAngle, currentbreakForce;
@@ -62,16 +62,15 @@ public class KART : MonoBehaviour
     
     //item manager
     public bool hasItem;
-    public List<GameObject> ItemList;
 
     public bool canUseItem;
 
     public GameObject itemImage_Box;
     public GameObject itemImage_Banana;
-    public GameObject itemImage_Shell;
+    public GameObject itemImage_Tire;
 
     public GameObject item_Banana;
-    public GameObject item_Shell;
+    public GameObject item_Tire;
     
 
 
@@ -86,29 +85,40 @@ public class KART : MonoBehaviour
         }
         rb = GetComponent<Rigidbody>();
     }
-    
+
+    public GameObject PowerBoxParent;
     private void Update()
     {
         //check for shoot
-        if (Input.GetKeyDown(KeyCode.E) && canUseItem)
+        if (Input.GetKeyDown(KeyCode.E) && canUseItem && isPlayer && hasItem)
         {
 
             canUseItem = false;
             
+            if (itemImage_Tire.activeSelf)
+            {
+                //shoots tire
+                GameObject test = Instantiate(item_Tire, item_Tire.transform);
+                test.transform.parent = this.transform;
+                Rigidbody rb = test.GetComponent<Rigidbody>();
+                test.SetActive(true);
+                rb.isKinematic = false;
+                rb.AddForce(transform.forward * 1000, ForceMode.Impulse);
+            } else if (itemImage_Banana.activeSelf)
+            {
+
+                //drops banana
+                GameObject test = Instantiate(item_Banana, item_Banana.transform);
+                test.transform.parent = PowerBoxParent.transform.parent;
+                test.SetActive(true);
+
+            }
+            
             itemImage_Box.SetActive(false);
             itemImage_Banana.SetActive(false);
-            
-            //shoots ball
-            GameObject test = Instantiate(Ball, Ball.transform);
-            test.transform.parent = this.transform;
-            Rigidbody rb = test.GetComponent<Rigidbody>();
-           
-            test.SetActive(true);
-            rb.isKinematic = false;
-            
-            rb.AddForce(transform.forward * 1000, ForceMode.Impulse);
-            
-            
+            itemImage_Tire.SetActive(false);
+
+
         }
     }
 
@@ -354,8 +364,23 @@ public class KART : MonoBehaviour
     {
         itemImage_Box.SetActive(true);
         yield return new WaitForSeconds(2);
-        itemImage_Box.SetActive(false);
-        itemImage_Banana.SetActive(true);
+        
+        //select item
+        int rand = Random.Range(0,2);
+        if (rand == 0)
+        {
+            //banana
+            itemImage_Box.SetActive(false);
+            itemImage_Banana.SetActive(true);
+            itemImage_Tire.SetActive(false);
+        } else if (rand == 1)
+        {
+            //tire
+            itemImage_Box.SetActive(false);
+            itemImage_Banana.SetActive(false);
+            itemImage_Tire.SetActive(true);
+        }
+        
         canUseItem = true;
     }
 }
