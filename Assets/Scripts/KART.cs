@@ -64,8 +64,14 @@ public class KART : MonoBehaviour
     public bool hasItem;
     public List<GameObject> ItemList;
 
+    public bool canUseItem;
+
     public GameObject itemImage_Box;
     public GameObject itemImage_Banana;
+    public GameObject itemImage_Shell;
+
+    public GameObject item_Banana;
+    public GameObject item_Shell;
     
 
 
@@ -84,8 +90,14 @@ public class KART : MonoBehaviour
     private void Update()
     {
         //check for shoot
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && canUseItem)
         {
+
+            canUseItem = false;
+            
+            itemImage_Box.SetActive(false);
+            itemImage_Banana.SetActive(false);
+            
             //shoots ball
             GameObject test = Instantiate(Ball, Ball.transform);
             test.transform.parent = this.transform;
@@ -95,6 +107,7 @@ public class KART : MonoBehaviour
             rb.isKinematic = false;
             
             rb.AddForce(transform.forward * 1000, ForceMode.Impulse);
+            
             
         }
     }
@@ -343,5 +356,6 @@ public class KART : MonoBehaviour
         yield return new WaitForSeconds(2);
         itemImage_Box.SetActive(false);
         itemImage_Banana.SetActive(true);
+        canUseItem = true;
     }
 }
