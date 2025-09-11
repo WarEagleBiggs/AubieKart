@@ -4,11 +4,11 @@ using System.Collections;
 public class MysteryBox : MonoBehaviour
 {
     [Header("Settings")]
-    public float respawnTime = 8f;          // How long before the box reappears
-    public float shrinkDuration = 0.3f;     // How fast it shrinks
+    public float respawnTime = 8f;          
+    public float shrinkDuration = 0.3f;     
 
-    private Vector3 originalScale;          // Store the original size
-    private bool isActive = true;           // Can it be triggered?
+    private Vector3 originalScale;          
+    private bool isActive = true;           
 
     void Start()
     {
@@ -17,7 +17,7 @@ public class MysteryBox : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (!isActive) return;              // Already used, ignore
+        if (!isActive) return;              
         if (other.CompareTag("KART"))
         {
             StartCoroutine(ShrinkAndRespawn());
@@ -37,7 +37,7 @@ public class MysteryBox : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-        transform.localScale = Vector3.zero; // Fully invisible
+        transform.localScale = Vector3.zero; 
 
         // Wait for respawn time
         yield return new WaitForSeconds(respawnTime);
