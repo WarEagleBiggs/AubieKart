@@ -108,9 +108,13 @@ public class KART : MonoBehaviour
             {
 
                 //drops banana
-                GameObject test = Instantiate(item_Banana, item_Banana.transform);
-                test.transform.parent = PowerBoxParent.transform.parent;
-                test.SetActive(true);
+                GameObject bana = Instantiate(item_Banana, item_Banana.transform);
+                bana.transform.parent = PowerBoxParent.transform.parent;
+                bana.SetActive(true);
+
+                Clamp clampScript = bana.GetComponent<Clamp>();
+                clampScript.doClamp();
+
 
             }
             
