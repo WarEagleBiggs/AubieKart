@@ -7027,7 +7027,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 1.02e-43, y: 1.39e-43, z: 1.1803e-41, w: 0}
+  m_BoundingSphereOverride: {x: -0.8, y: 8, z: 8.8, w: -8.8}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -17014,7 +17014,7 @@ GameObject:
   m_Layer: 0
   m_Name: Mario Kart DS_ Waluigi Pinball
   m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: 881798b77426a8f47b533dcc4767e9e5, type: 3}
+  m_Icon: {fileID: 2800000, guid: 57c4e3f77a0715c4ca116cd930742c6d, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -28995,7 +28995,7 @@ GameObject:
   m_Layer: 3
   m_Name: KART
   m_TagString: KART
-  m_Icon: {fileID: 2800000, guid: d2cd98bfabd74c145897bda79270c2e7, type: 3}
+  m_Icon: {fileID: 2800000, guid: 68025a7181ba87a4094cf2600feba040, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -30108,7 +30108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d45ed5ab7c6556040a4859da2c3e38ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canExecute: 0
   refernce: {fileID: 1439389383}
 --- !u!1 &1448586852
 GameObject:
