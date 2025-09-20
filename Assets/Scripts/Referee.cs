@@ -10,6 +10,10 @@ public class Referee : MonoBehaviour
 
     private void Start()
     {
+        foreach (var x in MapsList)
+        {
+            x.SetActive(false);
+        }
         MapsList[Master.GetInstance.currMap].SetActive(true);
     }
 
