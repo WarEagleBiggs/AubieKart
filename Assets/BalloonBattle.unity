@@ -2042,6 +2042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d9629bdeea41244a97e13ec9b2ed11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currMap: 0
 --- !u!4 &103279917
 Transform:
   m_ObjectHideFlags: 0
@@ -7338,7 +7339,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
   m_UseColorTemperature: 1
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 1.02e-43, y: 1.56e-43, z: 2.6192e-41, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -36934,6 +36935,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64dad4481ac370a4c9c76974f718cf19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MapsList:
+  - {fileID: 4522186706269726124}
+  - {fileID: 131312971}
 --- !u!1 &1818351141
 GameObject:
   m_ObjectHideFlags: 0
@@ -53076,7 +53080,7 @@ GameObject:
   m_Icon: {fileID: 2800000, guid: bd5470e965fbd224daa85ccd38723150, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!33 &4522505874413781504
 MeshFilter:
   m_ObjectHideFlags: 0

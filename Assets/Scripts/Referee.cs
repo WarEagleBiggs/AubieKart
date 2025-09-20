@@ -1,18 +1,30 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Referee : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public List<GameObject> MapsList;
+
+    private void Start()
     {
-        
+        MapsList[Master.GetInstance.currMap].SetActive(true);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.M) )
+        {
+            Master.GetInstance.currMap++;
+
+            if (Master.GetInstance.currMap > MapsList.Count -1)
+            {
+                Master.GetInstance.currMap = 0;
+            }
+            
+            SceneManager.LoadScene("BalloonBattle");
+        }
     }
 }

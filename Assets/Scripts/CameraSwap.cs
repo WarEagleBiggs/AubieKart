@@ -2,20 +2,16 @@ using UnityEngine;
 
 public class CameraSwap : MonoBehaviour
 {
-    [Tooltip("Assign exactly 3 cameras in the order you want to cycle.")]
     public Camera[] cameras = new Camera[3];
 
-    [Tooltip("Start with this camera index (0-2).")]
     public int startIndex = 0;
 
-    [Tooltip("Cycle on this key.")]
     public KeyCode cycleKey = KeyCode.Q;
 
     int _current;
 
     void Awake()
     {
-        // Fallback: if not assigned, try to grab up to 3 from the scene.
         if (cameras == null || cameras.Length == 0)
         {
             cameras = new Camera[Mathf.Min(3, Camera.allCamerasCount)];
@@ -47,7 +43,6 @@ public class CameraSwap : MonoBehaviour
             {
                 cameras[i].gameObject.SetActive(active);
 
-                // Ensure only one AudioListener is active to avoid Unity warnings.
                 var listener = cameras[i].GetComponent<AudioListener>();
                 if (listener) listener.enabled = active;
             }

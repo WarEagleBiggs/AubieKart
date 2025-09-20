@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class Master : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private static Master instance;
 
-    // Update is called once per frame
-    void Update()
+    public int currMap;
+    
+    public static Master GetInstance => instance;
+
+    private void Awake()
     {
-        
+        if (instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
     }
 }
