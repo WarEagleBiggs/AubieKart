@@ -59,6 +59,7 @@ public class KartAgent : Agent
         visited = new HashSet<int>();
     }
 
+    //test
     public override void OnEpisodeBegin()
     {
         rb.velocity = Vector3.zero;
