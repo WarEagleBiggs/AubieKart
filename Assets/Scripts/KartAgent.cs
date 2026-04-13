@@ -14,9 +14,11 @@ public class KartAgent : Agent
 
     [Header("Rewards")]
     [SerializeField] private float distanceRewardScale = 0.02f;
-    [SerializeField] private float wallHitPenalty = -0.1f;
-    [SerializeField] private float targetReward = 1.0f;
+    [SerializeField] private float closenessRewardScale = 0.005f;
+    [SerializeField] private float wallHitPenalty = -0.02f;
+    [SerializeField] private float targetReward = 2.0f;
     [SerializeField] private float timePenalty = -0.001f;
+    [SerializeField] private float stallPenalty = -0.002f;
 
     [Header("Observation Scaling")]
     [SerializeField] private float maxSpeed = 20f;
@@ -80,6 +82,17 @@ public class KartAgent : Agent
         float distanceDelta = previousDistance - currentDistance;
 
         AddReward(distanceDelta * distanceRewardScale);
+
+        float closenessReward = 1f / (1f + currentDistance);
+        AddReward(closenessReward * closenessRewardScale);
+
+        Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
+
+        if (Mathf.Abs(localVelocity.z) < 0.2f && Mathf.Abs(localVelocity.x) < 0.2f)
+        {
+            AddReward(stallPenalty);
+        }
+
         AddReward(timePenalty);
 
         previousDistance = currentDistance;
