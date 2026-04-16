@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -33,6 +34,12 @@ public class KartAgent : Agent
 
     private bool roundFinished;
     private bool reportedResult;
+
+
+    private void Start()
+    {
+        Time.timeScale = 200.0f;
+    }
 
     public bool RoundFinished => roundFinished;
 
