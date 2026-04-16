@@ -38,7 +38,7 @@ public class KartAgent : Agent
 
     private void Start()
     {
-        Time.timeScale = 200.0f;
+        Time.timeScale = 100.0f;
     }
 
     public bool RoundFinished => roundFinished;
